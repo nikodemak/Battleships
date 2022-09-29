@@ -1,0 +1,38 @@
+body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0px;
+}
+
+html, body {margin: 0; overflow: hidden}
+
+canvas {
+    padding: 0px;
+}
+
+table {
+    height: 48vh;
+    table-layout: fixed;
+    width: 48vh;
+    float: none;
+    margin: auto;
+    padding-top: 2vh;
+}
+
+#placing {
+    height: 4vh;
+    table-layout: fixed;
+    width: 4vh;
+    margin: auto;
+    padding-top: 2vh;
+}
+
+td {
+    height: 10%;
+    width: 10%;
+    background-color:deepskyblue;
+}
+
+tr {
+    height: 10%;
+}
