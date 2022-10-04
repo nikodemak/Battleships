@@ -4,10 +4,24 @@ body {
     margin: 0px;
 }
 
+label {
+    color: white;
+}
+
 html, body {margin: 0; overflow: hidden}
 
 canvas {
+    position: absolute;
+    top: 0px;
+    left: 0px;
     padding: 0px;
+    z-index: -1;
+}
+
+body > div {
+    width: 33.3%;
+    height: 100%;
+    float: left;
 }
 
 table {

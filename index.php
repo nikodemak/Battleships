@@ -36,12 +36,12 @@ for ($i=0; $i < 10; $i++) {
 $_SESSION["eboard"] = [];
 for ($i=0; $i < 10; $i++) {
     $_SESSION["eboard"][$i] = [];
-    for ($j=0; $j < 10; $j++) { 
+    for ($j=0; $j < 10; $j++) {
         $_SESSION["eboard"][$i][$j] = 0;
     }
 }
 $_SESSION["score"] = 0;
-$_SESSION["ships"] = [];
+$_SESSION["ships"] = [4,3,2,1];
 
 ?>
 <!DOCTYPE html>
@@ -55,6 +55,14 @@ $_SESSION["ships"] = [];
     <script src="https://pixijs.download/release/pixi.js"></script>
 </head>
 <body>
+    <div id="leftDiv">
+        <input id="rotBtn" type="button" value="rot">
+        <label id="sizeDisp">1</label>
+        <input id="sizeIncBtn" type="button" value="+">
+        <input id="sizeDecBtn" type="button" value="-">
+    </div>
+    <div id="centerDiv"></div>
+    <div id="rightDiv"></div>
     <script src="game.js"></script>
 </body>
 </html>

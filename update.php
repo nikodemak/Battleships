@@ -23,10 +23,26 @@ if($_SESSION["opponent"] != "waiting") {
                 $size = $_GET["size"];
                 $y = $field%10;
                 $x = ($field - $y)/10;
+                if (!isset($_SESSION["ships"][$size-1]) || $_SESSION["ships"][$size-1] <= 0) {
+                    goto end;
+                }
                 if($rot > 0) {
                     if($x+$size>10) goto end;
                 } else {
                     if($y+$size>10) goto end;
+                }
+                for ($i=-1; $i < $size + 1; $i++) {
+                    for ($j=-1; $j < 2; $j++) {
+                        if ($rot > 0) {
+                            if ($_SESSION["board"][max(0,$x+$i)][max(0, $y+$j)] == 2) {
+                                goto end;
+                            }
+                        } else {
+                            if ($_SESSION["board"][max(0,$x+$j)][max(0, $y+$i)] == 2) {
+                                goto end;
+                            }
+                        }
+                    }
                 }
                 for ($i=0; $i < $size; $i++) {
                     if($rot > 0) {
@@ -35,6 +51,7 @@ if($_SESSION["opponent"] != "waiting") {
                         $_SESSION["board"][$x][$y+$i] = 2;
                     }
                 }
+                $_SESSION["ships"][$size-1] = $_SESSION["ships"][$size-1] - 1;
                 end:
             }
         }

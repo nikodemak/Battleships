@@ -17,7 +17,8 @@ document.body.appendChild(app.view);
 PIXI.settings.PREFER_ENV = PIXI.ENV.WEBGL2
 
 
-let table = new PIXI.Container
+
+/*let table = new PIXI.Container
 table.name = "eboard"
 for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
@@ -37,7 +38,7 @@ for (let i = 0; i < 10; i++) {
 table.position.set(100,100);
 table.scale.set(0.5,0.5);
 app.stage.addChild(table);
-/*document.body.append(table)
+document.body.append(table)
 table = document.createElement("table")
 table.id = "board"
 for (let i = 0; i < 10; i++) {
@@ -55,7 +56,7 @@ for (let i = 0; i < 10; i++) {
     }
     table.appendChild(tr)
 }
-document.body.append(table)
+document.body.append(table)*/
 
 
 
@@ -156,7 +157,20 @@ for (let i = 0; i < 10; i++) {
     }
     table.appendChild(tr)
 }
-document.body.append(table)
+let shipRotation = 0
+document.getElementById("rotBtn").addEventListener("click", event => {
+    shipRotation = (shipRotation==0) ? 1 : 0;
+})
+let shipSize = 1
+document.getElementById("sizeDecBtn").addEventListener("click", event => {
+    shipSize = Math.min(Math.max(shipSize-1, 1), 4)
+    document.getElementById("sizeDisp").innerText = shipSize
+})
+document.getElementById("sizeIncBtn").addEventListener("click", event => {
+    shipSize = Math.min(Math.max(shipSize+1, 1), 4)
+    document.getElementById("sizeDisp").innerText = shipSize
+})
+document.getElementById("centerDiv").append(table)
 table = document.createElement("table")
 table.id = "board"
 for (let i = 0; i < 10; i++) {
@@ -166,10 +180,10 @@ for (let i = 0; i < 10; i++) {
         td.id = i*10+j
         td.onclick = function(event) {
             state.eventType = "place"
-            state.event = [td.id, 0, 2]
+            state.event = [td.id, shipRotation, shipSize]
         }
         tr.appendChild(td)
     }
     table.appendChild(tr)
 }
-document.body.append(table)*/
+document.getElementById("centerDiv").append(table)
