@@ -18,25 +18,28 @@ PIXI.settings.PREFER_ENV = PIXI.ENV.WEBGL2
 
 
 
-/*let table = new PIXI.Container
+let table = new PIXI.Container
 table.name = "eboard"
 for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
         let td = new PIXI.Graphics
-        td.beginFill(0xDE3249);
-        td.drawRect(i*1, j*1, i*1+5, j*1+5);
+        td.beginFill(0xFFFFFF);
+        td.drawRect(0*60, 0*60, 50, 1080);
         td.endFill();
+        td.tint = 0x0000FF
         td.name = i*10+j
-        td.onclick = function(event) {
+        td.interactive = true
+        td.on('click' ,() => {
             state.eventType = "shoot"
-            state.event = Array(Number(td.id.slice(1)))
+            td.tint = 0xFF0000;
+            state.event = Array(Number(td.name))
             //update()
-        }
+        })
         table.addChild(td);
     }
 }
-table.position.set(100,100);
-table.scale.set(0.5,0.5);
+table.position.set(100,0);
+//table.scale.set(0.5,0.5);
 app.stage.addChild(table);
 document.body.append(table)
 table = document.createElement("table")
@@ -56,7 +59,7 @@ for (let i = 0; i < 10; i++) {
     }
     table.appendChild(tr)
 }
-document.body.append(table)*/
+document.body.append(table)
 
 
 
@@ -137,7 +140,7 @@ function update() {
     }
     XHR.send()
 }
-
+/*
 setInterval(update, 500)
 
 let table = document.createElement("table")
@@ -186,4 +189,4 @@ for (let i = 0; i < 10; i++) {
     }
     table.appendChild(tr)
 }
-document.getElementById("centerDiv").append(table)
+document.getElementById("centerDiv").append(table)*/
