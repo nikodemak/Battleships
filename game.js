@@ -17,14 +17,13 @@ document.body.appendChild(app.view);
 PIXI.settings.PREFER_ENV = PIXI.ENV.WEBGL2
 
 
-
 let table = new PIXI.Container
 table.name = "eboard"
 for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
         let td = new PIXI.Graphics
         td.beginFill(0xFFFFFF);
-        td.drawRect(0*60, 0*60, 50, 1080);
+        td.drawRect(i*60, j*60, 50, 50);
         td.endFill();
         td.tint = 0x0000FF
         td.name = i*10+j
@@ -61,8 +60,38 @@ for (let i = 0; i < 10; i++) {
 }
 document.body.append(table)
 
+function copy(obj, dst) {
+    for (var property in obj) {
+        if (obj.hasOwnProperty(property)) {
+            if (typeof obj[property] == "object") {
+                dst[property] = Object();
+                copy(obj[property], dst[property]);
+            } else {
+                dst[property] = obj[property];
+            }
+        }
+    }
+}
 
-
+function update()
+{
+    let XHR = new XMLHttpRequest
+    XHR.open("GET", "poll.php")
+    XHR.onerror = update
+    XHR.onabort = update
+    XHR.ontimeout = update
+    XHR.onload = (event) => {
+        try {
+            let resp = JSON.parse(event.target.responseText)
+            
+            update()
+        } catch(err) {
+            console.log(err);
+            update();
+        }
+    }
+    XHR.send()
+}
 
 function update() {
     if (block) {return}
@@ -91,10 +120,10 @@ function update() {
     XHR.ontimeout = unblock
     XHR.onload = (event) => {
         try {
-            let tab = JSON.parse(event.target.responseText)
-            console.log(tab.opponent)
-            if (tab.opponent == "waiting") {
-                if(!document.getElementById("info")) {
+            let resp = JSON.parse(event.target.responseText)
+            console.log(resp.opponent)
+            if (resp.opponent == "waiting") {
+                if (!document.getElementById("info")) {
                     let info = document.createElement("h2")
                     info.id = "info"
                     info.textContent = "Waiting"
@@ -107,7 +136,7 @@ function update() {
             for (let i = 0; i < 10; i++) {
                 for (let j = 0; j < 10; j++) {
                     let td = document.getElementById("e"+(i*10+j))
-                    if(tab.eboard[i][j] == 1) {
+                    if (resp.eboard[i][j] == 1) {
                         td.style = "background-color:black;"
                     } else {
                         td.style = "background-color:red;"
@@ -117,7 +146,7 @@ function update() {
             for (let i = 0; i < 10; i++) {
                 for (let j = 0; j < 10; j++) {
                     let td = document.getElementById((i*10+j))
-                    switch (tab.board[i][j]) {
+                    switch (resp.board[i][j]) {
                         case 0:
                             td.style = ""
                             break;
@@ -140,6 +169,7 @@ function update() {
     }
     XHR.send()
 }
+
 /*
 setInterval(update, 500)
 

@@ -55,14 +55,6 @@ $_SESSION["ships"] = [4,3,2,1];
     <script src="https://pixijs.download/release/pixi.js"></script>
 </head>
 <body>
-    <div id="leftDiv">
-        <input id="rotBtn" type="button" value="rot">
-        <label id="sizeDisp">1</label>
-        <input id="sizeIncBtn" type="button" value="+">
-        <input id="sizeDecBtn" type="button" value="-">
-    </div>
-    <div id="centerDiv"></div>
-    <div id="rightDiv"></div>
     <script src="game.js"></script>
 </body>
 </html>

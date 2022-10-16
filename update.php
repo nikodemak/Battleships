@@ -65,4 +65,3 @@ if($_SESSION["opponent"] != "waiting") {
         }
     }
 }
-echo(json_encode($_SESSION));
