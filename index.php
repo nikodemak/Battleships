@@ -25,7 +25,7 @@ function pairPlayers() {
 }
 
 pairPlayers();
-$_SESSION["turn"] = false;
+$_SESSION["turn"] = true;
 $_SESSION["board"] = [];
 for ($i=0; $i < 10; $i++) {
     $_SESSION["board"][$i] = [];
@@ -42,6 +42,8 @@ for ($i=0; $i < 10; $i++) {
 }
 $_SESSION["score"] = 0;
 $_SESSION["ships"] = [4,3,2,1];
+$_SESSION["updated"] = true;
+session_commit();
 
 ?>
 <!DOCTYPE html>

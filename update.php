@@ -4,9 +4,9 @@ require("common.php");
 if($_SESSION["opponent"] != "waiting") {
     if(isset($_GET["event"])) {
         $event = $_GET["event"];
-        if($event == "shoot" && isset($_GET["shoot"])) {
+        if($event == "shoot" && isset($_GET["pos"])) {
             if ($_SESSION["turn"]) {
-                $field = $_GET["shoot"];
+                $field = $_GET["pos"];
                 $y = $field%10;
                 $x = ($field - $y)/10;
                 changeSession($_SESSION["opponent"]);
@@ -17,8 +17,8 @@ if($_SESSION["opponent"] != "waiting") {
             }
         }
         if($event == "place") {
-            if(isset($_GET["field"]) && isset($_GET["rot"]) && isset($_GET["size"])) {
-                $field = $_GET["field"];
+            if(isset($_GET["pos"]) && isset($_GET["rot"]) && isset($_GET["size"])) {
+                $field = $_GET["pos"];
                 $rot = $_GET["rot"];
                 $size = $_GET["size"];
                 $y = $field%10;
@@ -61,7 +61,8 @@ if($_SESSION["opponent"] != "waiting") {
             changeSession($_SESSION["opponent"]);
             $d = $_SESSION["board"][$i][$j];
             changeSession($_SESSION["opponent"]);
-            $_SESSION["eboard"][$i][$j] = ($d > 0) ? ($d == 3 ? 3 : ($d != 2)) : (0) ;
+            $_SESSION["eboard"][$i][$j] = ($d > 0) ? ($d == 3 ? 3 : (($d != 2) ? 1 : 0) ) : (0) ;
         }
     }
 }
+echo(json_encode($_SESSION));
