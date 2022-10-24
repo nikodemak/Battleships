@@ -1,52 +1,92 @@
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0
+}
+
+li {
+    width: 100%;
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+  }
+
 body {
+    display: flex;
     height: 100vh;
     width: 100vw;
-    margin: 0px;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
 }
 
-label {
-    color: white;
-}
-
-html, body {margin: 0; overflow: hidden}
-
-canvas {
+.centered {
     position: absolute;
-    top: 0px;
-    left: 0px;
-    padding: 0px;
-    z-index: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-body > div {
-    width: 33.3%;
+#main {
     height: 100%;
-    float: left;
+    width: 100%;
 }
 
-table {
-    height: 48vh;
-    table-layout: fixed;
-    width: 48vh;
-    float: none;
-    margin: auto;
-    padding-top: 2vh;
+#menu {
+    height: fit-content;
+    width: fit-content;
+    display: flex;
+    /*visibility: hidden;*/
+    align-items: center;
+    justify-content: center;
 }
 
-#placing {
-    height: 4vh;
-    table-layout: fixed;
-    width: 4vh;
-    margin: auto;
-    padding-top: 2vh;
+#lobby {
+    height: fit-content;
+    width: fit-content;
+    display: flex;
+    visibility: hidden;
+    align-items: center;
+    justify-content: center;
 }
 
-td {
-    height: 10%;
-    width: 10%;
-    background-color:deepskyblue;
+#game {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    visibility: hidden;
+    align-items: center;
+    justify-content: space-between;
 }
 
-tr {
-    height: 10%;
+#game > div {
+    text-align: center;
+}
+
+#centerScreen {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.board {
+    height: 40%;
+    width: 40%;
+    background-image:
+    repeating-linear-gradient(to right, black 0 1px, transparent 1px 10%),
+    repeating-linear-gradient(to bottom, black 0 1px, transparent 1px 10%);
 }
