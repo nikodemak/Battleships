@@ -47,7 +47,7 @@ body {
     height: fit-content;
     width: fit-content;
     display: flex;
-    /*visibility: hidden;*/
+    visibility: hidden;
     align-items: center;
     justify-content: center;
 }
@@ -81,12 +81,59 @@ body {
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+    /* background-image: url("sample.png"); */
+    /* transform: translate(100% -100%); */
 }
 
 .board {
-    height: 40%;
-    width: 40%;
+    width: 40vh;
+    height: 40vh;
+    justify-content: center;
+    display: grid;
+    transition: height 1s, width 1s;
+    image-rendering: optimizeQuality;
+}
+
+#ships {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-content: space-around;
+    flex-wrap: wrap;
+}
+
+#leftScreen {
+    height: 100%;
+}
+
+#ships > div {
     background-image:
-    repeating-linear-gradient(to right, black 0 1px, transparent 1px 10%),
-    repeating-linear-gradient(to bottom, black 0 1px, transparent 1px 10%);
+    linear-gradient(to right, black 0 5%, transparent 5% 95%, black 95% 100%),
+    linear-gradient(to bottom, black 0 5%, transparent 5% 95%, black 95% 100%);
+}
+
+#login {
+    height: 100%;
+    visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#register {
+    height: 100%;
+    visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.board > div {
+    background-image:
+    linear-gradient(to right, black 0 5%, transparent 5% 95%, black 95% 100%),
+    linear-gradient(to bottom, black 0 5%, transparent 5% 95%, black 95% 100%);
+    pointer-events: auto;
+    cursor: pointer;
 }

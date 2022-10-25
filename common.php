@@ -15,4 +15,5 @@ function changeSession($sid) {
     session_id($sid);
     session_start();
 }
+phpinfo();
 ?>
