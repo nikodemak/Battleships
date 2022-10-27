@@ -106,11 +106,58 @@ body {
     height: 100%;
 }
 
-#ships > div {
+.empty {
+    background-color: blue;
+}
+
+.hinted {
+    background-color: gray;
+}
+
+.board > .filled {
+    background-color: green;
+}
+
+.board > .shot {
+    background-color: red;
+}
+
+.rot0 {
+    transform: rotate(0deg);
+}
+
+.rot1 {
+    transform: rotate(90deg);
+}
+
+.ship {
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: 50% 50%;
+    transition: transform 0.5s;
+}
+
+.ship.size1 {
+    background-image: url("content/ships/Plane/PlaneF-35Lightning2.png");
+}
+
+.ship.size2 {
+    background-image: url("content/ships/Destroyer/ShipDestroyerHull.png");
+}
+
+.ship.size3 {
+    background-image: url("content/ships/Cruiser/ShipCruiserHull.png");
+}
+
+.ship.size4 {
+    background-image: url("content/ships/Battleship/ShipBattleshipHull.png");
+}
+
+/* #ships > div {
     background-image:
     linear-gradient(to right, black 0 5%, transparent 5% 95%, black 95% 100%),
     linear-gradient(to bottom, black 0 5%, transparent 5% 95%, black 95% 100%);
-}
+} */
 
 #login {
     height: 100%;

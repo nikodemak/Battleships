@@ -5,6 +5,16 @@ if($_SESSION["opponent"] != "waiting") {
     if(isset($_GET["event"])) {
         $event = $_GET["event"];
         if($event == "shoot" && isset($_GET["pos"])) {
+            for ($i=0; $i < 4; $i++) { 
+                if ($_SESSION["ships"][$i] > 0) {
+                    goto end;
+                }
+                changeSession($_SESSION["opponent"]);
+                if ($_SESSION["ships"][$i] > 0) {
+                    goto end;
+                }
+                changeSession($_SESSION["opponent"]);
+            }
             if ($_SESSION["turn"]) {
                 $field = $_GET["pos"];
                 $y = $field%10;
@@ -52,10 +62,10 @@ if($_SESSION["opponent"] != "waiting") {
                     }
                 }
                 $_SESSION["ships"][$size-1] = $_SESSION["ships"][$size-1] - 1;
-                end:
             }
         }
     }
+    end:
     for ($i=0; $i < 10; $i++) {
         for ($j=0; $j < 10; $j++) { 
             changeSession($_SESSION["opponent"]);
