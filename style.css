@@ -71,6 +71,16 @@ body {
     justify-content: space-between;
 }
 
+#endScreen {
+    height: fit-content;
+    width: fit-content;
+    display: flex;
+    visibility: hidden;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 #game > div {
     text-align: center;
 }
@@ -120,6 +130,10 @@ body {
 
 .board > .shot {
     background-color: red;
+}
+
+.board > .shotShip {
+    background-color: purple;
 }
 
 .rot0 {

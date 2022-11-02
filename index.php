@@ -45,6 +45,10 @@ session_start();
                 </div>
                 <div id="rightScreen">top board is the enemy board</div>
             </div>
+            <div id="endScreen" class="centered">
+                <div></div>
+                <a href="#menu" class="button play">Go back to Main Menu</a>
+            </div>
         </div>
         <script src="game.js"></script>
     </body>

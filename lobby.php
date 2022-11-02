@@ -11,7 +11,9 @@ function pairPlayers() {
         session_start();
         $_SESSION["opponent"] = $waiting;
         setInSession($waiting, "opponent", session_id());
-        //setInSession($waiting, "turn", true);
+        setInSession($waiting, "updated", 2);
+        $_SESSION["updated"] = 2;
+        setInSession($waiting, "turn", true);
         setInSession("waiting", "waiting", "");
     } else {
         session_start();
@@ -25,7 +27,7 @@ function pairPlayers() {
 }
 
 pairPlayers();
-$_SESSION["turn"] = true;
+$_SESSION["turn"] = false;
 $_SESSION["board"] = [];
 for ($i=0; $i < 10; $i++) {
     $_SESSION["board"][$i] = [];
@@ -42,6 +44,9 @@ for ($i=0; $i < 10; $i++) {
 }
 $_SESSION["score"] = 0;
 $_SESSION["ships"] = [4,3,2,1];
-$_SESSION["updated"] = true;
+$_SESSION["updated"] = ($_SESSION["updated"] > 1) ? $_SESSION["updated"] : 1;
+$_SESSION["gameStarted"] = false;
+$_SESSION["gameEnded"] = false;
+$_SESSION["winner"] = false;
 session_commit();
 ?>

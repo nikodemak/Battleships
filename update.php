@@ -20,10 +20,19 @@ if($_SESSION["opponent"] != "waiting") {
                 $y = $field%10;
                 $x = ($field - $y)/10;
                 changeSession($_SESSION["opponent"]);
-                    $_SESSION["board"][$x][$y] = 1;
-                    $_SESSION["turn"] = true;
+                    if($_SESSION["board"][$x][$y] == 2) {
+                        $_SESSION["board"][$x][$y] = 3;
+                        changeSession($_SESSION["opponent"]);
+                        $_SESSION["score"] += 1;
+                        changeSession($_SESSION["opponent"]);
+                    } else {
+                        $_SESSION["board"][$x][$y] = 1;
+                        changeSession($_SESSION["opponent"]);
+                        $_SESSION["turn"] = false;
+                        changeSession($_SESSION["opponent"]);
+                        $_SESSION["turn"] = true;
+                    }
                 changeSession($_SESSION["opponent"]);
-                $_SESSION["turn"] = false;
             }
         }
         if($event == "place") {
@@ -62,17 +71,35 @@ if($_SESSION["opponent"] != "waiting") {
                     }
                 }
                 $_SESSION["ships"][$size-1] = $_SESSION["ships"][$size-1] - 1;
+                for ($i=0; $i < 4; $i++) {
+                    if ($_SESSION["ships"][$i] > 0) {
+                        goto end;
+                    } else {
+                        $_SESSION["gameStarted"] = true;
+                    }
+                }
             }
         }
     }
     end:
+    if($_SESSION["score"] >= 20) {
+        $_SESSION["gameEnded"] = true;
+        $_SESSION["winner"] = true;
+        changeSession($_SESSION["opponent"]);
+        $_SESSION["gameEnded"] = true;
+        changeSession($_SESSION["opponent"]);
+    }
     for ($i=0; $i < 10; $i++) {
-        for ($j=0; $j < 10; $j++) { 
+        for ($j=0; $j < 10; $j++) {
             changeSession($_SESSION["opponent"]);
             $d = $_SESSION["board"][$i][$j];
             changeSession($_SESSION["opponent"]);
-            $_SESSION["eboard"][$i][$j] = ($d > 0) ? ($d == 3 ? 3 : (($d != 2) ? 1 : 0) ) : (0) ;
+            $_SESSION["eboard"][$i][$j] = ($d > 0) ? ($d >= 3 ? $d : (($d != 2) ? 1 : 0) ) : (0) ;
         }
     }
+    $_SESSION["updated"] = $_SESSION["updated"] + 1;
+    changeSession($_SESSION["opponent"]);
+    $_SESSION["updated"] = $_SESSION["updated"] + 1;
+    changeSession($_SESSION["opponent"]);
 }
 echo(json_encode($_SESSION));

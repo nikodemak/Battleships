@@ -25,7 +25,7 @@ function getCookie(name) {
 }
 
 function isInsideBoard(sizeX, sizeY, x, y, ox, oy) {
-    return (x+ox < sizeX && y+oy < sizeY && x+ox > 0 && y+oy > 0)
+    return (x+ox < sizeX && y+oy < sizeY && x+ox >= 0 && y+oy >= 0)
 }
 
 // return true if position is valid
@@ -80,6 +80,11 @@ function handleHash(e) {
         if (getCookie("loggedIn") == "true") {
             findElem(".button.login").style.visibility = "hidden"
             findElem(".button.register").style.visibility = "hidden"
+            findElem(".button.play-guest").innerText = "Play"
+        } else {
+            findElem(".button.login").style.visibility = null
+            findElem(".button.register").style.visibility = null
+            findElem(".button.play-guest").innerText = "Play as a Guest"
         }
     }
     if (location.hash == "#lobby") {
@@ -93,6 +98,9 @@ function handleHash(e) {
     }
     if (location.hash == "#game") {
         
+    }
+    if (location.hash == "#endScreen") {
+        findElem("#endScreen").style.visibility = "visible"
     }
 }
 
@@ -116,7 +124,7 @@ function setupGame() {
             div.classList.add("pos"+(10*i+j), "empty")
             div.addEventListener("dragenter", (e) => { //handle ship dragging effects
                 e.preventDefault()
-                let data = JSON.parse(e.dataTransfer.getData("ship"))
+                let data = state.drag
                 if (!verifyShipPos(data, sizeX, sizeY, i, j)) {
                     return
                 }
@@ -132,7 +140,7 @@ function setupGame() {
             })
             div.addEventListener("dragleave", e => { //handle ship dragging effects
                 e.preventDefault()
-                let data = JSON.parse(e.dataTransfer.getData("ship"))
+                let data = state.drag
                 if (!verifyShipPos(data, sizeX, sizeY, i, j)) {
                     return
                 }
@@ -146,10 +154,15 @@ function setupGame() {
             })
             div.addEventListener("dragover", (e) => {
                 e.preventDefault()
+                e.dataTransfer.dropEffect = 'copy'
+                let data = state.drag
+                if (!verifyShipPos(data, sizeX, sizeY, i, j)) {
+                    return
+                }
             })
             div.addEventListener("drop", e => { // handle dropping a ship
                 e.preventDefault()
-                let data = JSON.parse(e.dataTransfer.getData("ship"))
+                let data = state.drag
                 if (!verifyShipPos(data, sizeX, sizeY, i, j)) {
                     return
                 }
@@ -190,95 +203,131 @@ function setupGame() {
         findElem(".board#friendly").style.height = "60vh"
     }, 30)
     for (let i = 1; i <= 4; i++) {
-        for (let j = 4; j >= i; j--) {
-            let div = document.createElement("div")
-            div.classList.add("ship", "size"+i, "rot0")
-            div.style.height = i*(40/percentY)+"vh"
-            div.style.width = i*(40/percentY)+"vh"
-            div.draggable = true
-            div.addEventListener('wheel', () => {
-                if(div.classList.contains("rot1"))
-                {
-                    div.classList.remove("rot1")
-                    div.classList.add("rot0")
-                }
-                else
-                {
-                    div.classList.remove("rot0")
-                    div.classList.add("rot1")
-                }
-            });
-            div.addEventListener("dragstart", e => {
-                e.dataTransfer.setData("ship", JSON.stringify({
-                    size: i,
-                    rot: (div.classList.contains("rot1")) ? 0 : 1
-                }))
-            })
-            div.addEventListener("dragend", e => {
-                if (e.dataTransfer.dropEffect != "none") {
-                    div.style.visibility = "hidden"
-                }
-            })
-            findElem("#ships").append(div)
-        }
+        let div = document.createElement("div")
+        div.classList.add("ship", "size"+i, "rot0")
+        div.style.height = i*(40/percentY)+"vh"
+        div.style.width = i*(40/percentY)+"vh"
+        div.draggable = true
+        div.addEventListener('wheel', () => {
+            if(div.classList.contains("rot1"))
+            {
+                div.classList.remove("rot1")
+                div.classList.add("rot0")
+            }
+            else
+            {
+                div.classList.remove("rot0")
+                div.classList.add("rot1")
+            }
+        });
+        div.addEventListener("dragstart", e => {
+            let data = {
+                size: i
+            }
+            if (div.classList.contains("rot1")) {
+                data.rot = 0
+            } else {
+                data.rot = 1
+            }
+            state.drag = data
+        })
+        findElem("#ships").append(div)
     };
 }
 
-function update()
-{
-    if (!state.gameStarted && state.opponent) {
+function unsetupGame() {
+    findElem("#game").style.visibility = null
+    findElem("#ships").innerHTML = ""
+    findElem(".board#friendly").innerHTML = ""
+    findElem(".board#enemy").innerHTML = ""
+    state = null
+    state = {
+        gameStarted: false,
+        gameEnded: false,
+        gameReady: false
+    }
+}
+
+function setCell(elm, str) {
+    elm.classList.remove("filled", "empty", "shot", "shotShip")
+    elm.classList.add(str)
+}
+
+function update() {
+    if (state.gameEnded) {
+        findElem("#endScreen > div").innerText = (state.winner) ? "You Won" : "The Opponent Won"
+        unsetupGame()
+        location.hash = "endScreen"
+    } else if (!state.gameReady && state.opponent && !state.gameEnded) {
         setupGame()
-        state.gameStarted = true
-    }
-    if (state.turn) {
-        findElem(".board#friendly").style.width = "60vh"
-        findElem(".board#friendly").style.height = "60vh"
-        findElem(".board#enemy").style.width = "40vh"
-        findElem(".board#enemy").style.height = "40vh"
-    } else {
-        findElem(".board#friendly").style.width = "40vh"
-        findElem(".board#friendly").style.height = "40vh"
-        findElem(".board#enemy").style.width = "60vh"
-        findElem(".board#enemy").style.height = "60vh"
-    }
-    for (let i = 0; i < 10; i++) {
-        for (let j = 0; j < 10; j++) { // player board
-            switch (state.board[i][j]) {
-                case 0:
-                    findElem(".board#friendly > .pos"+((i)*10+j)).classList.remove("filled", "empty", "shot")
-                    findElem(".board#friendly > .pos"+((i)*10+j)).classList.add("empty")
-                    break;
-                case 1:
-                    findElem(".board#friendly > .pos"+((i)*10+j)).classList.remove("filled", "empty", "shot")
-                    findElem(".board#friendly > .pos"+((i)*10+j)).classList.add("shot")
-                    break;
-                case 2:
-                    findElem(".board#friendly > .pos"+((i)*10+j)).classList.remove("filled", "empty", "shot")
-                    findElem(".board#friendly > .pos"+((i)*10+j)).classList.add("filled")
-                    break;
-                default:
-                    break;
-            } 
-            switch (state.eboard[i][j]) {//enemy board
-                case 0:
-                    findElem(".board#enemy > .pos"+((i)*10+j)).classList.remove("filled", "empty", "shot")
-                    findElem(".board#enemy > .pos"+((i)*10+j)).classList.add("empty")
-                    break;
-                case 1:
-                    findElem(".board#enemy > .pos"+((i)*10+j)).classList.remove("filled", "empty", "shot")
-                    findElem(".board#enemy > .pos"+((i)*10+j)).classList.add("shot")
-                    break;
-                default:
-                    break;
+        state.gameReady = true
+    } else if(state.gameReady) {
+        if (state.turn && state.gameStarted) {
+            findElem(".board#friendly").style.width = "40vh"
+            findElem(".board#friendly").style.height = "40vh"
+            findElem(".board#enemy").style.width = "60vh"
+            findElem(".board#enemy").style.height = "60vh"
+        } else {
+            findElem(".board#friendly").style.width = "60vh"
+            findElem(".board#friendly").style.height = "60vh"
+            findElem(".board#enemy").style.width = "40vh"
+            findElem(".board#enemy").style.height = "40vh"
+        }
+        for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < 10; j++) { // player board
+                switch (state.board[i][j]) {
+                    case 0:
+                        setCell(findElem(".board#friendly > .pos" + ((i) * 10 + j)), "empty")
+                        break;
+                    case 1:
+                        setCell(findElem(".board#friendly > .pos" + ((i) * 10 + j)), "shot")
+                        break;
+                    case 2:
+                        setCell(findElem(".board#friendly > .pos" + ((i) * 10 + j)), "filled")
+                        break;
+                    case 3:
+                        setCell(findElem(".board#friendly > .pos" + ((i) * 10 + j)), "shotShip")
+                        break;
+                    default:
+                        break;
+                }
+                switch (state.eboard[i][j]) { //enemy board
+                    case 0:
+                        setCell(findElem(".board#enemy > .pos" + ((i) * 10 + j)), "empty")
+                        break;
+                    case 1:
+                        setCell(findElem(".board#enemy > .pos" + ((i) * 10 + j)), "shot")
+                        break;
+                    case 3:
+                        setCell(findElem(".board#enemy > .pos" + ((i) * 10 + j)), "shotShip")
+                        break;
+                    default:
+                        break;
+                }
             }
+        }
+        for (let i = 1; i <= 4; i++) {
+            if (state.ships[i-1] > 0) {
+                findElem("#ships > .size"+i).style.visibility = null
+            } else {
+                findElem("#ships > .size"+i).style.visibility = "hidden"
+            }
+            
         }
     }
 }
 
 function recv()
 {
+    if (state.gameEnded) {
+        return
+    }
     let XHR = new XMLHttpRequest
-    XHR.open("GET", "poll.php")
+    let params = {
+        updated: state.updated ? state.updated : 0
+    }
+    let search = new URLSearchParams(params).toString()
+    XHR.open("GET", "poll.php?" + search)
     XHR.onload = (event) => {
         try {
             let resp = JSON.parse(event.target.responseText)
@@ -298,7 +347,7 @@ function send(event) {
     let params = {}
     copyObj(event, params)
     let search = new URLSearchParams(params).toString()
-    XHR.open("GET", "update.php?"+search)
+    XHR.open("GET", "update.php?" + search)
     XHR.send()
 }
 
@@ -318,11 +367,11 @@ findElem(".input.button.login").addEventListener("click", event => {
     }
     const re = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
     if (re.test(findElem(".input.username.login").value)) {
-        params.email = findElem(".input.username.login").value
+        params.email = findElem(".input.username.login")
     } else {
         params.username = findElem(".input.username.login").value
     }
-    let search = new URLSearchParams(params).toString()
+    const search = new URLSearchParams(params).toString()
     XHR.open("POST", "login.php")
     XHR.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
     XHR.onload = (event) => {
