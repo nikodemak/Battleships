@@ -1,58 +1,73 @@
-// short for document.querySelector
-function findElem(selector) {
-    return document.querySelector(selector)
-}
+//
+// INITIAL SETUP
+//
 
 let state = {
     gameStarted: false
 }
 
-findElem("#menu").style.visibility = "visible"
-
 if (location.hash == "#game") {
     location.hash = "menu"
+}
+
+handleHash()
+
+
+
+//
+// UTILITY FUNCTIONS
+//
+
+// short for document.querySelector
+function findElem(selector) {
+    return document.querySelector(selector)
 }
 
 function getCookie(name) {
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
+    for (var i = 0; i < ca.length; i++) {
         var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
     }
     return null;
 }
 
 function isInsideBoard(sizeX, sizeY, x, y, ox, oy) {
-    return (x+ox < sizeX && y+oy < sizeY && x+ox >= 0 && y+oy >= 0)
+    return (x + ox < sizeX && y + oy < sizeY && x + ox >= 0 && y + oy >= 0)
+}
+
+function setCell(elm, str) {
+    elm.classList.remove("filled", "empty", "shot", "shotShip")
+    elm.classList.add(str)
 }
 
 // return true if position is valid
 function verifyShipPos(data, sizeX, sizeY, x, y) {
-    for (let o=-1; o < data.size + 1; o++) {
-        for (k=-1; k < 2; k++) {
+    for (let o = -1; o < data.size + 1; o++) {
+        for (k = -1; k < 2; k++) {
             if (data.rot > 0) {
                 if (!isInsideBoard(sizeX, sizeY, x, y, o, k)) {
                     continue
                 }
-                if (findElem(".board#friendly > .pos"+((x+o)*10+y+k)).classList.contains("filled")) {
+                if (findElem(".board#friendly > .pos" + ((x + o) * 10 + y + k)).classList.contains("filled")) {
                     return false
                 }
             } else {
                 if (!isInsideBoard(sizeX, sizeY, x, y, k, o)) {
                     continue
                 }
-                if (findElem(".board#friendly > .pos"+((x+k)*10+y+o)).classList.contains("filled")) {
+                if (findElem(".board#friendly > .pos" + ((x + k) * 10 + y + o)).classList.contains("filled")) {
                     return false
                 }
             }
         }
     }
-    if (data.rot == 1 && x+data.size > sizeX) {
+    if (data.rot == 1 && x + data.size > sizeX) {
         return false
     }
-    if (data.rot == 0 && y+data.size > sizeY) {
+    if (data.rot == 0 && y + data.size > sizeY) {
         return false
     }
     return true
@@ -70,6 +85,12 @@ function copyObj(obj, dst) {
         }
     }
 }
+
+
+
+//
+// LOCATION HASH CHANGE HANDLING
+//
 
 function handleHash(e) {
     document.querySelectorAll("#main > div").forEach(element => {
@@ -97,31 +118,27 @@ function handleHash(e) {
         findElem("#register").style.visibility = "visible"
     }
     if (location.hash == "#game") {
-        
+
     }
     if (location.hash == "#endScreen") {
         findElem("#endScreen").style.visibility = "visible"
     }
 }
 
-handleHash()
-
-window.addEventListener('hashchange', handleHash, false)
-
 function setupGame() {
     findElem("#game").style.visibility = "visible"
     let sizeX = 10
     let sizeY = 10
-    let percentX = 100/sizeX
-    let percentY = 100/sizeY
-    findElem(".board#friendly").style.gridTemplateColumns = (percentX+"% [col-start]").repeat(sizeX);
-    findElem(".board#friendly").style.gridTemplateRows = (percentX+"% [col-start]").repeat(sizeY);
-    findElem(".board#enemy").style.gridTemplateColumns = (percentY+"% [col-start]").repeat(sizeX);
-    findElem(".board#enemy").style.gridTemplateRows = (percentY+"% [col-start]").repeat(sizeY);
+    let percentX = 100 / sizeX
+    let percentY = 100 / sizeY
+    findElem(".board#friendly").style.gridTemplateColumns = (percentX + "% [col-start]").repeat(sizeX);
+    findElem(".board#friendly").style.gridTemplateRows = (percentX + "% [col-start]").repeat(sizeY);
+    findElem(".board#enemy").style.gridTemplateColumns = (percentY + "% [col-start]").repeat(sizeX);
+    findElem(".board#enemy").style.gridTemplateRows = (percentY + "% [col-start]").repeat(sizeY);
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 10; j++) {
             let div = document.createElement("div")
-            div.classList.add("pos"+(10*i+j), "empty")
+            div.classList.add("pos" + (10 * i + j), "empty")
             div.addEventListener("dragenter", (e) => { //handle ship dragging effects
                 e.preventDefault()
                 let data = state.drag
@@ -129,11 +146,11 @@ function setupGame() {
                     return
                 }
                 setTimeout(data => {
-                    for (let k=0; k < data.size; k++) {
-                        if(data.rot > 0) {
-                            findElem(".board#friendly > .pos"+((i+k)*10+j)).classList.add("hinted")
+                    for (let k = 0; k < data.size; k++) {
+                        if (data.rot > 0) {
+                            findElem(".board#friendly > .pos" + ((i + k) * 10 + j)).classList.add("hinted")
                         } else {
-                            findElem(".board#friendly > .pos"+(i*10+j+k)).classList.add("hinted")
+                            findElem(".board#friendly > .pos" + (i * 10 + j + k)).classList.add("hinted")
                         }
                     }
                 }, 0, data)
@@ -144,11 +161,11 @@ function setupGame() {
                 if (!verifyShipPos(data, sizeX, sizeY, i, j)) {
                     return
                 }
-                for (let k=0; k < data.size; k++) {
-                    if(data.rot > 0) {
-                        findElem(".board#friendly > .pos"+((i+k)*10+j)).classList.remove("hinted")
+                for (let k = 0; k < data.size; k++) {
+                    if (data.rot > 0) {
+                        findElem(".board#friendly > .pos" + ((i + k) * 10 + j)).classList.remove("hinted")
                     } else {
-                        findElem(".board#friendly > .pos"+(i*10+j+k)).classList.remove("hinted")
+                        findElem(".board#friendly > .pos" + (i * 10 + j + k)).classList.remove("hinted")
                     }
                 }
             })
@@ -166,16 +183,16 @@ function setupGame() {
                 if (!verifyShipPos(data, sizeX, sizeY, i, j)) {
                     return
                 }
-                for (let k=0; k < data.size; k++) {
-                    if(data.rot > 0) {
-                        findElem(".board#friendly > .pos"+((i+k)*10+j)).classList.remove("hinted")
+                for (let k = 0; k < data.size; k++) {
+                    if (data.rot > 0) {
+                        findElem(".board#friendly > .pos" + ((i + k) * 10 + j)).classList.remove("hinted")
                     } else {
-                        findElem(".board#friendly > .pos"+(i*10+j+k)).classList.remove("hinted")
+                        findElem(".board#friendly > .pos" + (i * 10 + j + k)).classList.remove("hinted")
                     }
                 }
                 let event = {
                     event: "place",
-                    pos: i*10+j,
+                    pos: i * 10 + j,
                     rot: data.rot,
                     size: data.size
                 }
@@ -187,11 +204,11 @@ function setupGame() {
     for (let i = 0; i < 10; i++) { // enemy board
         for (let j = 0; j < 10; j++) {
             let div = document.createElement("div")
-            div.classList.add("pos"+(10*i+j), "empty")
+            div.classList.add("pos" + (10 * i + j), "empty")
             div.addEventListener("click", e => {
                 let event = {
                     event: "shoot",
-                    pos: i*10+j
+                    pos: i * 10 + j
                 }
                 send(event)
             })
@@ -204,18 +221,16 @@ function setupGame() {
     }, 30)
     for (let i = 1; i <= 4; i++) {
         let div = document.createElement("div")
-        div.classList.add("ship", "size"+i, "rot0")
-        div.style.height = i*(40/percentY)+"vh"
-        div.style.width = i*(40/percentY)+"vh"
+        div.classList.add("ship", "size" + i, "rot0")
+        div.style.height = i * (40 / percentY) + "vh"
+        div.style.width = i * (40 / percentY) + "vh"
         div.draggable = true
         div.addEventListener('wheel', () => {
-            if(div.classList.contains("rot1"))
-            {
+            if (div.classList.contains("rot1")) {
                 div.classList.remove("rot1")
                 div.classList.add("rot0")
             }
-            else
-            {
+            else {
                 div.classList.remove("rot0")
                 div.classList.add("rot1")
             }
@@ -248,10 +263,11 @@ function unsetupGame() {
     }
 }
 
-function setCell(elm, str) {
-    elm.classList.remove("filled", "empty", "shot", "shotShip")
-    elm.classList.add(str)
-}
+
+
+//
+// GAME STATE UPDATE
+//
 
 function update() {
     if (state.gameEnded) {
@@ -261,7 +277,7 @@ function update() {
     } else if (!state.gameReady && state.opponent && !state.gameEnded) {
         setupGame()
         state.gameReady = true
-    } else if(state.gameReady) {
+    } else if (state.gameReady) {
         if (state.turn && state.gameStarted) {
             findElem(".board#friendly").style.width = "40vh"
             findElem(".board#friendly").style.height = "40vh"
@@ -307,21 +323,23 @@ function update() {
             }
         }
         for (let i = 1; i <= 4; i++) {
-            if (state.ships[i-1] > 0) {
-                findElem("#ships > .size"+i).style.visibility = null
+            if (state.ships[i - 1] > 0) {
+                findElem("#ships > .size" + i).style.visibility = null
             } else {
-                findElem("#ships > .size"+i).style.visibility = "hidden"
+                findElem("#ships > .size" + i).style.visibility = "hidden"
             }
-            
+
         }
     }
 }
 
-function recv()
-{
-    if (state.gameEnded) {
-        return
-    }
+
+
+//
+// SERVER COMMUNICATION
+//
+
+function recv() {
     let XHR = new XMLHttpRequest
     let params = {
         updated: state.updated ? state.updated : 0
@@ -332,9 +350,13 @@ function recv()
         try {
             let resp = JSON.parse(event.target.responseText)
             copyObj(resp, state)
+            if (state.gameEnded) {
+                update()
+                return
+            }
             update()
             recv()
-        } catch(err) {
+        } catch (err) {
             console.log(err)
             recv()
         }
@@ -350,6 +372,12 @@ function send(event) {
     XHR.open("GET", "update.php?" + search)
     XHR.send()
 }
+
+
+
+//
+// ADD EVENT LISTENERS
+//
 
 findElem(".button.play").addEventListener("click", () => {
     let XHR = new XMLHttpRequest
@@ -384,7 +412,7 @@ findElem(".input.button.login").addEventListener("click", event => {
     XHR.send(search)
 })
 
-findElem(".input.button.register").addEventListener("click", event => { 
+findElem(".input.button.register").addEventListener("click", event => {
     let XHR = new XMLHttpRequest
     let params = {
         username: findElem(".input.username.register").value,
@@ -396,3 +424,5 @@ findElem(".input.button.register").addEventListener("click", event => {
     XHR.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
     XHR.send(search)
 })
+
+window.addEventListener('hashchange', handleHash, false)

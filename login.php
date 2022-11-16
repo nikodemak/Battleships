@@ -3,7 +3,7 @@ require("db.php");
 session_start();
 if (isset($_REQUEST["password"])) {
     if (isset($_REQUEST["username"])) {
-        $query = $conn->prepare("SELECT `*` FROM `users` where username=?");
+        $query = $conn->prepare("SELECT * FROM `users` where username=?");
         if (mysqli_errno($conn) != 0) {
             echo(mysqli_error($conn));
         }
@@ -14,7 +14,7 @@ if (isset($_REQUEST["password"])) {
             http_response_code(201);
             exit();
         }
-        $query = $conn->prepare("SELECT `*` FROM `users` where email=?");
+        $query = $conn->prepare("SELECT * FROM `users` where email=?");
         $query->bind_param("s", $_REQUEST["email"]);
     }
     $query->execute();

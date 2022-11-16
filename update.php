@@ -25,7 +25,7 @@ if($_SESSION["opponent"] != "waiting") {
                         changeSession($_SESSION["opponent"]);
                         $_SESSION["score"] += 1;
                         changeSession($_SESSION["opponent"]);
-                    } else {
+                    } elseif($_SESSION["board"][$x][$y] == 0) {
                         $_SESSION["board"][$x][$y] = 1;
                         changeSession($_SESSION["opponent"]);
                         $_SESSION["turn"] = false;

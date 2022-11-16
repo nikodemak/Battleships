@@ -4,16 +4,17 @@ require("common.php");
 function pairPlayers() {
     session_id("waiting");
     session_start();
-    $waiting =& $_SESSION["waiting"];
+    $waiting = $_SESSION["waiting"];
     session_commit();
     session_id(session_create_id());
-    if($waiting && $waiting != "") {
+    if($waiting != "" && time() - $_SESSION["lastRequest"] <= 2) {
         session_start();
         $_SESSION["opponent"] = $waiting;
         setInSession($waiting, "opponent", session_id());
         setInSession($waiting, "updated", 2);
         $_SESSION["updated"] = 2;
         setInSession($waiting, "turn", true);
+        setInSession("waiting", "lastRequest", 0);
         setInSession("waiting", "waiting", "");
     } else {
         session_start();
@@ -22,6 +23,7 @@ function pairPlayers() {
         } else {
             $_SESSION["opponent"] = "waiting";
             setInSession("waiting", "waiting", session_id());
+            setInSession("waiting", "lastRequest", time());
         }
     }
 }
