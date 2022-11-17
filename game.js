@@ -422,6 +422,13 @@ findElem(".input.button.register").addEventListener("click", event => {
     let search = new URLSearchParams(params).toString()
     XHR.open("POST", "register.php")
     XHR.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+    XHR.onload = (event) => {
+        if (XHR.responseText == "success") {
+            location.hash = "menu"
+        } else {
+            findElem(".input.button.register").value = XHR.responseText
+        }
+    }
     XHR.send(search)
 })
 
